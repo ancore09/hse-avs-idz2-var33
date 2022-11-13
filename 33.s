@@ -4,6 +4,9 @@
 	.section	.rodata
 .LC0:
 	.string	"w"
+	.align 8
+.LC1:
+	.string	"you must provide 3 valid file paths"
 	.text
 	.globl	printUnique
 	.type	printUnique, @function
@@ -27,33 +30,40 @@ printUnique:
 	mov	rdi, rax
 	call	fopen@PLT
 	mov	QWORD PTR -24[rbp], rax
+	cmp	QWORD PTR -24[rbp], 0
+	jne	.L2
+	lea	rax, .LC1[rip]
+	mov	rdi, rax
+	call	puts@PLT
+	jmp	.L1
+.L2:
 	mov	r13d, 0
-	jmp	.L2
-.L4:
+	jmp	.L4
+.L6:
 	mov	eax, r13d
 	movsx	rdx, eax
 	mov	rax, QWORD PTR -40[rbp]
 	add	rax, rdx
 	movzx	eax, BYTE PTR [rax]
 	cmp	al, 2
-	jne	.L3
+	jne	.L5
 	mov	edx, r13d
 	mov	rax, QWORD PTR -24[rbp]
 	mov	rsi, rax
 	mov	edi, edx
 	call	fputc@PLT
-.L3:
+.L5:
 	mov	eax, r13d
 	add	eax, 1
 	mov	r13d, eax
-.L2:
+.L4:
 	mov	eax, r13d
 	cmp	eax, 127
-	jle	.L4
+	jle	.L6
 	mov	rax, QWORD PTR -24[rbp]
 	mov	rdi, rax
 	call	fclose@PLT
-	nop
+.L1:
 	mov	r13, QWORD PTR -8[rbp]
 	leave
 	.cfi_def_cfa 7, 8
@@ -62,7 +72,7 @@ printUnique:
 .LFE6:
 	.size	printUnique, .-printUnique
 	.section	.rodata
-.LC1:
+.LC2:
 	.string	"r"
 	.text
 	.globl	main
@@ -85,12 +95,20 @@ main:
 	.cfi_offset 12, -40
 	mov	DWORD PTR -52[rbp], edi
 	mov	QWORD PTR -64[rbp], rsi
+	cmp	DWORD PTR -52[rbp], 4
+	je	.L8
+	lea	rax, .LC1[rip]
+	mov	rdi, rax
+	call	puts@PLT
+	mov	eax, 1
+	jmp	.L9
+.L8:
 	mov	edi, 128
 	call	malloc@PLT
 	mov	r14, rax
 	mov	r13d, 0
-	jmp	.L6
-.L7:
+	jmp	.L10
+.L11:
 	mov	rdx, r14
 	mov	eax, r13d
 	cdqe
@@ -99,73 +117,85 @@ main:
 	mov	eax, r13d
 	add	eax, 1
 	mov	r13d, eax
-.L6:
+.L10:
 	mov	eax, r13d
 	cmp	eax, 127
-	jle	.L7
+	jle	.L11
 	mov	rax, QWORD PTR -64[rbp]
 	add	rax, 8
 	mov	rax, QWORD PTR [rax]
-	lea	rdx, .LC1[rip]
+	lea	rdx, .LC2[rip]
 	mov	rsi, rdx
 	mov	rdi, rax
 	call	fopen@PLT
 	mov	QWORD PTR -48[rbp], rax
-	jmp	.L8
-.L9:
+	cmp	QWORD PTR -48[rbp], 0
+	jne	.L13
+	lea	rax, .LC1[rip]
+	mov	rdi, rax
+	call	puts@PLT
+	mov	eax, 1
+	jmp	.L9
+.L14:
 	mov	rdx, r14
 	mov	eax, r12d
 	movsx	rax, al
 	add	rax, rdx
 	movzx	eax, BYTE PTR [rax]
 	test	al, al
-	jne	.L8
+	jne	.L13
 	mov	rdx, r14
 	mov	eax, r12d
 	movsx	rax, al
 	add	rax, rdx
 	mov	BYTE PTR [rax], 1
-.L8:
+.L13:
 	mov	rax, QWORD PTR -48[rbp]
 	mov	rdi, rax
 	call	fgetc@PLT
 	mov	r12d, eax
 	mov	eax, r12d
 	cmp	al, -1
-	jne	.L9
+	jne	.L14
 	mov	rax, QWORD PTR -48[rbp]
 	mov	rdi, rax
 	call	fclose@PLT
 	mov	rax, QWORD PTR -64[rbp]
 	add	rax, 16
 	mov	rax, QWORD PTR [rax]
-	lea	rdx, .LC1[rip]
+	lea	rdx, .LC2[rip]
 	mov	rsi, rdx
 	mov	rdi, rax
 	call	fopen@PLT
 	mov	QWORD PTR -40[rbp], rax
-	jmp	.L10
-.L11:
+	cmp	QWORD PTR -40[rbp], 0
+	jne	.L16
+	lea	rax, .LC1[rip]
+	mov	rdi, rax
+	call	puts@PLT
+	mov	eax, 1
+	jmp	.L9
+.L17:
 	mov	rdx, r14
 	mov	eax, r12d
 	movsx	rax, al
 	add	rax, rdx
 	movzx	eax, BYTE PTR [rax]
 	cmp	al, 1
-	jne	.L10
+	jne	.L16
 	mov	rdx, r14
 	mov	eax, r12d
 	movsx	rax, al
 	add	rax, rdx
 	mov	BYTE PTR [rax], 2
-.L10:
+.L16:
 	mov	rax, QWORD PTR -40[rbp]
 	mov	rdi, rax
 	call	fgetc@PLT
 	mov	r12d, eax
 	mov	eax, r12d
 	cmp	al, -1
-	jne	.L11
+	jne	.L17
 	mov	rax, QWORD PTR -40[rbp]
 	mov	rdi, rax
 	call	fclose@PLT
@@ -180,6 +210,7 @@ main:
 	mov	rdi, rax
 	call	free@PLT
 	mov	eax, 0
+.L9:
 	add	rsp, 40
 	pop	r12
 	pop	r13

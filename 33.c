@@ -4,6 +4,10 @@
 void printUnique(char *arr, char *path)
 {
     FILE *fp = fopen(path, "w");
+    if (fp == NULL) {
+        printf("you must provide 3 valid file paths\n");
+        return;
+    }
 
     register int i asm("r13");
     // print all true values
@@ -16,6 +20,12 @@ void printUnique(char *arr, char *path)
 }
 
 int main(int argc, char *argv[]) {
+
+    if (argc != 4) {
+        printf("you must provide 3 valid file paths\n");
+        return 1;
+    }
+
     register int i asm("r13");
     register char *a asm("r14") = (char *)malloc(128 * sizeof(char));
     register char c asm("r12");
@@ -26,6 +36,10 @@ int main(int argc, char *argv[]) {
 
     // read string from file
     FILE *fp1 = fopen(argv[1], "r");
+    if (fp1 == NULL) {
+        printf("you must provide 3 valid file paths\n");
+        return 1;
+    }
     while ((c = fgetc(fp1)) != EOF) {
         if (a[c] == 0) {
             a[c] = 1;
@@ -34,6 +48,10 @@ int main(int argc, char *argv[]) {
     fclose(fp1);
 
     FILE *fp2 = fopen(argv[2], "r");
+    if (fp2 == NULL) {
+        printf("you must provide 3 valid file paths\n");
+        return 1;
+    }
     while ((c = fgetc(fp2)) != EOF) {
         if (a[c] == 1) {
             a[c] = 2;
